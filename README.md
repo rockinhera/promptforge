@@ -4,7 +4,7 @@ PromptForge is a frontend only prompt template studio built with **Next.js** and
 
 ##  Live Preview:
 
-[View PromptForge Live](YOUR_VERCEL_URL)
+[View PromptForge Live](https://promptforge-zeta-sepia.vercel.app/)
 
 ## Features:
 
