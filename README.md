@@ -27,9 +27,4 @@ PromptForge is a frontend only prompt template studio built with **Next.js** and
 * JavaScript
 * React
 * LocalStorage
-* CSS 
-
-
-## 📌 Project Status
-
-Completed as part of Level 5 frontend development traini
+* CSS
