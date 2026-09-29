@@ -1,12 +1,12 @@
-import { Button, Group, Text, Title } from "@mantine/core";
+import { Box, Button, Group, Text, Title } from "@mantine/core";
 import { IconBookmark } from "@tabler/icons-react";
 
 export default function Header({ onSavedClick, showSavedOnly }) {
   return (
     <Group justify="space-between" mb="xl">
-      <div style={{ width: "160px" }} />
+      <Box w={160} />
 
-      <div style={{ textAlign: "center" }}>
+      <Box ta="center">
         <Title order={1} fw={800}>
           PromptForge
         </Title>
@@ -14,7 +14,7 @@ export default function Header({ onSavedClick, showSavedOnly }) {
         <Text size="sm" c="dimmed">
           Visual Prompt Template Studio
         </Text>
-      </div>
+      </Box>
 
       <Button
         variant={showSavedOnly ? "filled" : "light"}

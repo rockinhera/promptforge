@@ -18,13 +18,10 @@ import LivePreview from "./components/LivePreview";
 import SaveTemplate from "./components/SaveTemplate";
 
 import { templates } from "./data/templates";
+import { extractVariables } from "./utils/promptUtils";
 
 export default function Home() {
   const [category, setCategory] = useState("All");
-
-  const [selectedTemplate, setSelectedTemplate] = useState(
-    templates[0]
-  );
 
   const [prompt, setPrompt] = useState(
     templates[0].template
@@ -43,33 +40,65 @@ export default function Home() {
 
   const [showSavedOnly, setShowSavedOnly] = useState(false);
 
-  const variables = useMemo(() => {
-    const matches = prompt.match(/{{(.*?)}}/g) || [];
-
-    return [
-      ...new Set(
-        matches.map((match) =>
-          match.replace("{{", "").replace("}}", "").trim()
-        )
-      ),
-    ];
-  }, [prompt]);
+  const variables = useMemo(
+    () => extractVariables(prompt),
+    [prompt]
+  );
 
   useEffect(() => {
-    const savedTemplates = localStorage.getItem(
-      "promptforge-templates"
-    );
+    try {
+      const savedTemplates = localStorage.getItem(
+        "promptforge-templates"
+      );
 
-    const savedFavorites = localStorage.getItem(
-      "promptforge-favorites"
-    );
+      const savedFavorites = localStorage.getItem(
+        "promptforge-favorites"
+      );
 
-    if (savedTemplates) {
-      setCustomTemplates(JSON.parse(savedTemplates));
-    }
+      if (savedTemplates) {
+        const parsedTemplates = JSON.parse(savedTemplates);
 
-    if (savedFavorites) {
-      setFavoriteIds(JSON.parse(savedFavorites));
+        if (Array.isArray(parsedTemplates)) {
+          const validTemplates = parsedTemplates.filter(
+            (template) =>
+              template &&
+              typeof template === "object" &&
+              typeof template.id === "number" &&
+              typeof template.title === "string" &&
+              typeof template.template === "string"
+          );
+
+          setCustomTemplates(validTemplates);
+        }
+      }
+
+      if (savedFavorites) {
+        const parsedFavorites = JSON.parse(savedFavorites);
+
+        if (Array.isArray(parsedFavorites)) {
+          const validFavorites = parsedFavorites.filter(
+            (id) =>
+              typeof id === "number" ||
+              typeof id === "string"
+          );
+
+          setFavoriteIds(validFavorites);
+        }
+      }
+    } catch (error) {
+      console.error(
+        "Failed to load PromptForge data from localStorage:",
+        error
+      );
+
+      setCustomTemplates([]);
+      setFavoriteIds([]);
+
+      notifications.show({
+        title: "Could not load saved data",
+        message:
+          "Some saved PromptForge data was invalid and could not be loaded.",
+      });
     }
   }, []);
 
@@ -92,7 +121,6 @@ export default function Home() {
   };
 
   const handleUseTemplate = (template) => {
-    setSelectedTemplate(template);
     setPrompt(template.template);
     setValues({});
     setTemplateName("");
@@ -171,6 +199,14 @@ export default function Home() {
   };
 
   const handleDeleteTemplate = (id) => {
+    const shouldDelete = window.confirm(
+      "Are you sure you want to delete this template?"
+    );
+
+    if (!shouldDelete) {
+      return;
+    }
+
     const updatedTemplates = customTemplates.filter(
       (template) => template.id !== id
     );
@@ -207,7 +243,6 @@ export default function Home() {
   };
 
   const handleEditTemplate = (template) => {
-    setSelectedTemplate(template);
     setPrompt(template.template);
     setTemplateName(template.title);
     setEditingTemplateId(template.id);
@@ -215,6 +250,16 @@ export default function Home() {
     notifications.show({
       title: "Editing template",
       message: "Make your changes and click Update Template.",
+    });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingTemplateId(null);
+    setTemplateName("");
+
+    notifications.show({
+      title: "Edit cancelled",
+      message: "Your changes were not saved.",
     });
   };
 
@@ -259,6 +304,7 @@ export default function Home() {
 
         <TemplateCatalog
           templates={displayedTemplates}
+          allTemplates={templatesWithFavorites}
           category={category}
           onCategoryChange={setCategory}
           onUseTemplate={handleUseTemplate}
@@ -290,9 +336,10 @@ export default function Home() {
           name={templateName}
           onNameChange={setTemplateName}
           onSave={handleSaveTemplate}
+          onCancelEdit={handleCancelEdit}
           editing={editingTemplateId !== null}
         />
       </Stack>
     </Container>
   );
-}
+} 

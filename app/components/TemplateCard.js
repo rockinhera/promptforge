@@ -39,7 +39,11 @@ export default function TemplateCard({
             <ActionIcon
               variant="subtle"
               onClick={() => onFavorite(template.id)}
-              aria-label="Save template"
+              aria-label={
+                template.favorite
+                  ? "Remove from favorites"
+                  : "Add to favorites"
+              }
             >
               {template.favorite ? (
                 <IconHeartFilled size={18} />

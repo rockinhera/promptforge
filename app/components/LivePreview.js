@@ -1,3 +1,4 @@
+
 import {
   Button,
   Card,
@@ -11,6 +12,7 @@ import {
   IconCheck,
   IconCopy,
   IconDownload,
+  IconAlertCircle,
 } from "@tabler/icons-react";
 
 export default function LivePreview({ prompt, values }) {
@@ -23,13 +25,24 @@ export default function LivePreview({ prompt, values }) {
   );
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(compiledPrompt);
+    try {
+      await navigator.clipboard.writeText(compiledPrompt);
 
-    notifications.show({
-      title: "Prompt copied!",
-      message: "Your compiled prompt has been copied.",
-      icon: <IconCheck size={18} />,
-    });
+      notifications.show({
+        title: "Prompt copied!",
+        message: "Your compiled prompt has been copied.",
+        icon: <IconCheck size={18} />,
+      });
+    } catch (error) {
+      console.error("Failed to copy prompt:", error);
+
+      notifications.show({
+        title: "Copy failed",
+        message:
+          "We couldn't copy the prompt. Please try again.",
+        icon: <IconAlertCircle size={18} />,
+      });
+    }
   };
 
   const handleDownload = () => {
@@ -44,7 +57,9 @@ export default function LivePreview({ prompt, values }) {
     link.download = "prompt.txt";
     link.click();
 
-    URL.revokeObjectURL(url);
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, 100);
 
     notifications.show({
       title: "Prompt downloaded!",
@@ -92,4 +107,4 @@ export default function LivePreview({ prompt, values }) {
       </Stack>
     </Card>
   );
-} 
+}

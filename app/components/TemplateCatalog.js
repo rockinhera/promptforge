@@ -11,6 +11,7 @@ import TemplateCard from "./TemplateCard";
 
 export default function TemplateCatalog({
   templates,
+  allTemplates,
   category,
   onCategoryChange,
   onUseTemplate,
@@ -20,10 +21,9 @@ export default function TemplateCatalog({
 }) {
   const categories = [
     "All",
-    "Coding",
-    "Writing",
-    "Productivity",
-    "Custom",
+    ...new Set(
+      allTemplates.map((template) => template.category)
+    ),
   ];
 
   const filteredTemplates =
@@ -55,10 +55,10 @@ export default function TemplateCatalog({
       {filteredTemplates.length === 0 ? (
         <Card withBorder radius="md" padding="xl">
           <Stack align="center" gap="xs">
-            <Title order={4}>No saved templates yet</Title>
+            <Title order={4}>No templates found</Title>
 
             <Text size="sm" c="dimmed" ta="center">
-              Click the heart icon on a template to save it.
+              Try selecting a different category or create a new template.
             </Text>
           </Stack>
         </Card>

@@ -1,17 +1,19 @@
 import {
   Button,
   Card,
+  Group,
   Stack,
   Text,
   TextInput,
   Title,
 } from "@mantine/core";
-import { IconDeviceFloppy } from "@tabler/icons-react";
+import { IconDeviceFloppy, IconX } from "@tabler/icons-react";
 
 export default function SaveTemplate({
   name,
   onNameChange,
   onSave,
+  onCancelEdit,
   editing,
 }) {
   return (
@@ -19,7 +21,9 @@ export default function SaveTemplate({
       <Stack gap="sm">
         <div>
           <Title order={3}>
-            {editing ? "Update Your Template" : "Save Your Template"}
+            {editing
+              ? "Update Your Template"
+              : "Save Your Template"}
           </Title>
 
           <Text size="sm" c="dimmed">
@@ -36,12 +40,24 @@ export default function SaveTemplate({
           }
         />
 
-        <Button
-          leftSection={<IconDeviceFloppy size={16} />}
-          onClick={onSave}
-        >
-          {editing ? "Update Template" : "Save Template"}
-        </Button>
+        <Group>
+          <Button
+            leftSection={<IconDeviceFloppy size={16} />}
+            onClick={onSave}
+          >
+            {editing ? "Update Template" : "Save Template"}
+          </Button>
+
+          {editing && (
+            <Button
+              variant="default"
+              leftSection={<IconX size={16} />}
+              onClick={onCancelEdit}
+            >
+              Cancel Edit
+            </Button>
+          )}
+        </Group>
       </Stack>
     </Card>
   );
