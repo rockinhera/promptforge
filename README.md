@@ -60,7 +60,7 @@ Custom templates can also be edited or deleted.
 
 PromptForge is a frontend only prompt template studio built with **Next.js** and **Mantine UI**. It allows users to create, customize, preview, and save reusable AI prompt templates directly in the browser.
 
-<<<<<<< HEAD
+
 ##  Live Preview:
 
 [View PromptForge Live](https://promptforge-zeta-sepia.vercel.app/)
@@ -119,4 +119,3 @@ PromptForge is deployed using Vercel.
 
 [View the live application](https://promptforge-zeta-sepia.vercel.app/)
  
->>>>>>> f91b394 (Improve PromptForge review updates)
